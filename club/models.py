@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 class Meeting(models.Model):
+  meetingid=models.AutoField(primary_key=True)
   meetingtitle=models.CharField(max_length=225)
   meetingdate=models.DateField()
   meetingtime=models.TimeField()
@@ -31,7 +32,7 @@ class Resource(models.Model):
   resourceURL=models.URLField(null=True, blank=True)
   dateentered=models.DateField()
   userid=models.ForeignKey(User, on_delete=models.CASCADE)
-  resoucedescription=models.TextField()
+  resourcedescription=models.TextField()
 
   def __str__(self):
     return self.resourcename
