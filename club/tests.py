@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .models import Meeting, MeetingMinute, Resource, Event
 import datetime
 from .forms import MeetingForm, ResourceForm
+from django.urls import reverse_lazy, reverse
 # Create your tests here.
 class MeetingTest(TestCase):
   def setUp(self):
@@ -44,7 +45,8 @@ class EventTest(TestCase):
 class MeetingForm(TestCase):
 
   def test_meetingform(self):
-    form=MeetingForm(data={'meetingtitle':'1st meeting', 'meetingdate':'6/2/2022', 'meetingtime':'2pm', 'meetinglocation':'Seattle', 'agenda':'agenda 1'})
+    form=MeetingForm(self)
+    data={'meetingtitle':'1st meeting', 'meetingdate':'6/2/2022', 'meetingtime':'2pm', 'meetinglocation':'Seattle', 'agenda':'agenda 1'}
     self.assertTrue(form.is_valid)
 
 class ResourceForm(TestCase):
@@ -61,3 +63,17 @@ class ResourceForm(TestCase):
 
     form=ResourceForm (data)
     self.assertTrue(form.is_valid)
+
+
+class New_Meeting_Authentication_Test(TestCase):
+  def setUp(self):
+    self.test_user=User.objects.create_user(username='testuser1',password='P@ssw0rd1')
+    self.meetingtittle=Meeting.objects.create(meetingtitle='1st meeting')
+    self.meetingdate=Meeting.objects.create(meetingdate=datetime.date(2022,6,5))
+    self.meetingtime=Meeting.objects.create(meetingtime=datetime.time())
+    self.meetinglocation=Meeting.objects.create(meetinglocation='Seattle')
+    self.agenda=Meeting.objects.create(agenda='test agenda')
+
+  def test_redirect_if_not_logged_in(self):
+    response=self.client.get(reverse('newmeeting'))
+    self.assertRedirects(response, 'accounts/login/?next=/club/newmeeting/')
